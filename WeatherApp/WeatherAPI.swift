@@ -21,7 +21,7 @@ class WeatherAPI {
         }
         url.append(queryItems: [ URLQueryItem(name: "q", value: "\(lat), \(lon)"),
                                  URLQueryItem(name: "lang", value: "ru"),
-                                 URLQueryItem(name: "key", value: "df7eff6935614f4797073316231202") ])
+                                 URLQueryItem(name: "key", value: "") ])
         return URLSession.shared.dataTaskPublisher(for: url)
             .map(\.data)
             .decode(type: Weather.self, decoder: JSONDecoder())
