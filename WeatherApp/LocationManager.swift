@@ -33,7 +33,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("Error getting location", error)
-        self.viewState = .error
+        self.viewState = .error("Ошибка получения геопозиции:\(error.localizedDescription)")
     }
     
 }

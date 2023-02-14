@@ -31,8 +31,8 @@ struct WeatherView: View {
         case .loading:
             ProgressView()
                 .progressViewStyle(.circular)
-        case .error:
-            Text("error")
+        case .error(let error):
+            Text(error)
         case .success:
             VStack {
                 if let weather = viewModel.weather {

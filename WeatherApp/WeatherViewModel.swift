@@ -13,10 +13,10 @@ enum ViewState {
     case ready
     case loading
     case success
-    case error
+    case error(String)
 }
 
-class WeatherViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
+class WeatherViewModel: NSObject, ObservableObject {
     
     let weatherAPI = WeatherAPI()
     let manager = CLLocationManager()
@@ -41,7 +41,7 @@ class WeatherViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
         case .restricted:
             manager.requestWhenInUseAuthorization()
         case .denied:
-            viewState = .error
+            self.viewState = .error("Необходимо предоставить приложению доступ к геопозиции в настройках девайса")
         case .authorizedWhenInUse:
             manager.requestLocation()
         }
@@ -55,7 +55,7 @@ class WeatherViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
                 .sink { completion in
                     switch completion {
                     case .failure(let error) :
-                        self.viewState = .error
+                        self.viewState = .error(error.localizedDescription)
                         print("error", error)
                     case .finished:
                         self.viewState = .success
@@ -69,6 +69,9 @@ class WeatherViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
             requestLocation()
         }
     }
+}
+
+extension WeatherViewModel: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         location = locations.first?.coordinate
@@ -77,7 +80,7 @@ class WeatherViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("Error getting location", error)
-        self.viewState = .ready
+        self.viewState = .error("Ошибка получения геопозиции:\(error.localizedDescription)")
     }
     
 }
